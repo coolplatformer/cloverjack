@@ -1,0 +1,208 @@
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  background: #ffffff;
+  overflow: hidden; /* prevent page scrollbar */
+}
+#app {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr 1fr auto auto;
+  gap: 8px;
+  padding: 12px;
+  box-sizing: border-box;
+  overflow: hidden; /* ensure the app doesn't scroll */
+}
+.row { display: flex; align-items: center; justify-content: center; }
+.col { width: 100%; max-width: 420px; }
+.label { font-weight: 600; margin-bottom: 4px; }
+.cards { display: flex; gap: 8px; flex-wrap: wrap; overflow: hidden; justify-content: center; align-content: center; }
+.card {
+  position: relative; /* new: enable layering for reveal cross-fade */
+  /* removed border to eliminate black square around cards */
+  padding: 6px;
+  min-width: 64px;
+  min-height: 80px;
+  max-width: 22%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px;
+  line-height: 1;
+  font-family: "Segoe UI Symbol", "Noto Color Emoji", "Apple Color Emoji", serif;
+  background: transparent;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  /* removed opacity/transform from container to animate the image instead */
+  opacity: 1;
+  transform: none;
+
+  /* NEW: enable smooth movement when cards reflow using FLIP technique */
+  will-change: transform, opacity;
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* ensure card back gif fits the card area */
+.card img,
+.card .layered-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  border-radius: 6px;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* layered reveal images: back sits above real, we animate opacity */
+.card .layered-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: opacity 300ms cubic-bezier(.2,.8,.2,1);
+  will-change: opacity, transform;
+}
+.card .layered-img.real {
+  z-index: 1;
+  opacity: 0; /* start hidden, fade in */
+}
+.card .layered-img.back {
+  z-index: 2;
+  opacity: 1; /* start visible, fade out when revealing */
+}
+
+/* when the card node gets the visible class, animate the contained image */
+.card.visible img {
+  opacity: 1;
+  /* apply bounce-in animation with a small delay so GIFs start after a short pause */
+  animation: bounce-in 420ms cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: 180ms; /* delay the card image bounce-in */
+}
+
+/* bounce keyframes for card entry */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(8px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.total { display: none; }
+.controls {
+  gap: 12px;
+  padding: 8px 0;
+  box-sizing: border-box;
+  justify-content: center;
+  position: fixed;
+  left: 50%;
+  bottom: 20px;          /* place near bottom */
+  transform: translateX(-50%);
+  z-index: 50;
+  background: transparent; /* no background so buttons float cleanly */
+  width: auto;            /* shrink to content so it's centered precisely */
+  max-width: none;
+  pointer-events: auto;
+}
+/* make buttons bigger and centered */
+button {
+  flex: none;
+  width: 140px;
+  min-width: 140px;
+  min-height: 64px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+button:disabled { opacity: 0.5; pointer-events: none; }
+
+/* ensure the button images scale nicely for mobile touch */
+.controls button img {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* keep status centered */
+.status { text-align: center; min-height: 24px }
+
+/* centered result overlay */
+#result {
+  position: absolute;
+  left: 50%;
+  top: 45%; /* moved slightly up from 50% */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 320px;         /* increased size for a bigger GIF */
+  height: 320px;        /* increased size for a bigger GIF */
+  /* removed opacity/transition so result appears immediately */
+  z-index: 40;
+}
+#result.visible {
+  pointer-events: auto;
+  /* kept for semantics but no opacity transition */
+}
+#result img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* class used by JS to start/identify result image animation - only added after image load */
+.result-bounce {
+  animation: bounce-in 420ms cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: 180ms;
+}
+
+/* top-left token + wins counter */
+#token-wins {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 60;
+  pointer-events: none;
+}
+#token-wins img { width: 44px; height: 44px; display: block; pointer-events: none; }
+#wins { display: flex; gap: 4px; align-items: center; pointer-events: none; }
+/* style digit gifs inside wins */
+#wins { font-weight: 700; font-size: 16px; color: #111; }
+
+/* digit gifs for wins counter */
+#wins img {
+  height: 20px;
+  width: auto;
+  display: inline-block;
+  pointer-events: none;
+  vertical-align: middle;
+  image-rendering: -webkit-optimize-contrast;
+}
+/* 21 token top-left */
+/* token/wins removed */
+
