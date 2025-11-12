@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>cloverjack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <!-- favicon: use clovertab.gif -->
+  <link rel="icon" type="image/gif" href="/clovertab.gif">
+</head>
+<body>
+  <div id="app">
+    <!-- add 21 token and wins counter top-left -->
+    <div id="token-wins" aria-hidden="false">
+      <img id="token-img" src="/21token.gif" alt="21 token">
+      <div id="wins" aria-live="polite"></div>
+    </div>
+    <div class="row">
+      <div class="col">
+
+        <div id="dealer-cards" class="cards"></div>
+        <div id="dealer-total" class="total"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+
+        <div id="player-cards" class="cards"></div>
+        <div id="player-total" class="total"></div>
+      </div>
+    </div>
+    <div class="row controls">
+      <button id="hit" aria-label="Hit"><img src="/hit.gif" alt="Hit"></button>
+      <button id="stand" aria-label="Stand"><img src="/stand.gif" alt="Stand"></button>
+      <button id="new-round" aria-label="New Round"><img src="/_next.gif" alt="New Round"></button>
+    </div>
+    <div id="status" class="status" aria-live="polite"></div>
+
+    <!-- result overlay -->
+    <div id="result" aria-hidden="true">
+      <img id="result-img" src="" alt="result">
+    </div>
+  </div>
+
+  <!-- token/wins removed -->
+  
+  <script type="module" src="game.js"></script>
+</body>
+</html>
